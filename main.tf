@@ -15,5 +15,16 @@ module "subnets" {
 
   tags = var.tags
   env  = var.env
+}
 
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.vpc.id
+
+  tags =  merge(var.tags, { Name = "${var.env}-igw" })
+}
+
+resource "aws_eip" "elastic_ip" {
+  count = length(var.subnets["public"].cidr_block)
+
+  tags =  merge(var.tags, { Name = "${var.env}-igw-${count.index+1}" })
 }
