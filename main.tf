@@ -46,7 +46,7 @@ resource "aws_route" "route_igw" {
 
 resource "aws_route" "route_ngw" {
   count                  = length(local.all_private_subnet)
-  nat_gateway_id         = aws_nat_gateway.ngw.id
+  nat_gateway_id         = aws_nat_gateway.ngw[count.index].id
   route_table_id         = local.all_private_subnet[count.index]
   destination_cidr_block = "0.0.0.0/0"
 }
