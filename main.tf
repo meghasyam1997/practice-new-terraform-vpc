@@ -31,7 +31,7 @@ resource "aws_eip" "elastic_ip" {
 
 resource "aws_nat_gateway" "ngw" {
   count         = length(var.subnets["public"].cidr_block)
-  allocation_id = aws_eip.elastic_ip.id[count.index]
+  allocation_id = aws_eip.elastic_ip[count.index].id
   subnet_id     = module.subnets["public"].subnet_ids[count.index]
 
   tags = merge(var.tags, { Name = "${var.env}-ngw-${count.index+1}" })
@@ -39,7 +39,7 @@ resource "aws_nat_gateway" "ngw" {
 
 resource "aws_route" "route_igw" {
   count                  = length(module.subnets["pubic"].route_ids)
-  gateway_id             = aws_eip.elastic_ip.id
+  gateway_id             = aws_eip.elastic_ip[count.index].id
   route_table_id         = module.subnets["public"].route_ids[count.index]
   destination_cidr_block = "0.0.0.0/0"
 }
