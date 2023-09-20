@@ -4,6 +4,6 @@ resource "aws_subnet" "subnets" {
   cidr_block        = var.cidr_block[count.index]
   availability_zone = var.availability_zone[count.index]
 
-  tags = merge(var.tags, { Name = "${var.name}-${var.env}-subnet-${count.index}" })
+  tags = merge(var.tags, { Name = "${var.name}-${var.env}-subnet-${count.index+1}" })
 }
 
