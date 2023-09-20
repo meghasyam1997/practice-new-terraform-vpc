@@ -38,7 +38,7 @@ resource "aws_nat_gateway" "ngw" {
 }
 
 resource "aws_route" "route_igw" {
-  count                  = length(module.subnets["pubic"].route_ids)
+  count                  = length(module.subnets["public"].route_ids)
   gateway_id             = aws_eip.elastic_ip[count.index].id
   route_table_id         = module.subnets["public"].route_ids[count.index]
   destination_cidr_block = "0.0.0.0/0"
