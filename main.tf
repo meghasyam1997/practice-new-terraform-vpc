@@ -20,25 +20,26 @@ module "subnets" {
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.vpc.id
 
-  tags =  merge(var.tags, { Name = "${var.env}-igw" })
+  tags = merge(var.tags, { Name = "${var.env}-igw" })
 }
 
 resource "aws_eip" "elastic_ip" {
   count = length(var.subnets["public"].cidr_block)
 
-  tags =  merge(var.tags, { Name = "${var.env}-igw-${count.index+1}" })
+  tags = merge(var.tags, { Name = "${var.env}-igw-${count.index+1}" })
 }
 
-#resource "aws_nat_gateway" "ngw" {
-#
-#  allocation_id = aws_eip.elastic_ip.id
-#  subnet_id     = aws_subnet.example.id
-#
-#  tags = {
-#    Name = "gw NAT"
-#  }
-#}
+resource "aws_nat_gateway" "ngw" {
+  count         = length(var.subnets["public"].cidr_block)
+  allocation_id = aws_eip.elastic_ip.id
+  subnet_id     = module.subnets["public"].subnet_ids[count.index]
 
-output "subnets" {
-  value = module.subnets
+  tags = merge(var.tags, { Name = "${var.env}-ngw-${count.index+1}" })
+}
+
+resource "aws_route" "route_igw" {
+  count                  = length(module.subnets["pubic"].route_ids)
+  gateway_id             = aws_eip.elastic_ip.id
+  route_table_id         = module.subnets["public"].route_ids[count.index]
+  destination_cidr_block = "0.0.0.0/0"
 }
