@@ -28,3 +28,17 @@ resource "aws_eip" "elastic_ip" {
 
   tags =  merge(var.tags, { Name = "${var.env}-igw-${count.index+1}" })
 }
+
+#resource "aws_nat_gateway" "ngw" {
+#
+#  allocation_id = aws_eip.elastic_ip.id
+#  subnet_id     = aws_subnet.example.id
+#
+#  tags = {
+#    Name = "gw NAT"
+#  }
+#}
+
+output "subnets" {
+  value = module.subnets
+}
